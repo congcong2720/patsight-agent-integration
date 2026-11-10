@@ -75,4 +75,349 @@ main > section:first-child > div:last-child > div > div + div{padding-top:28px;b
 </style>
 <script id="patsight-case-runtime">
 (() => {
-  const 
+  const rawPage = location.pathname.split('/').pop() || '01-home.html';
+  const page = rawPage.startsWith('05-agent-intro') ? '05-agent-intro.html' : rawPage;
+  const backend = ['02-agent-connect.html', '03-api-keys.html'].includes(page);
+  const parameters = new URLSearchParams(location.search);
+  const savedLocale = () => { try { return localStorage.getItem('patsight-locale'); } catch { return null; } };
+  let language = parameters.get('lang') === 'en' ? 'en' : parameters.get('lang') === 'zh' ? 'zh' : savedLocale() === 'en' ? 'en' : 'zh';
+  const saveLocale = () => { try { localStorage.setItem('patsight-locale', language); } catch {} };
+  saveLocale();
+  document.documentElement.lang = language === 'en' ? 'en' : 'zh-CN';
+  const pairs = [
+    ['Agent 集成', 'Agent integration'], ['接入配置', 'Setup'], ['API Key 管理', 'API keys'],
+    ['将 PatSight 配置到你自己的 Agent，统一管理租户访问凭据。', 'Connect PatSight to your own Agent and manage your tenant API keys.'],
+    ['研发团队 · 演示租户', 'R&D team · Demo tenant'], ['首页', 'Home'], ['用户中心', 'User center'], ['帮助中心', 'Help center'], ['演示用户', 'Demo user'], ['研', 'D'], ['PatSight 官网', 'PatSight website'],
+    ['产品模块', 'Product modules'], ['Agent 集成页签', 'Agent integration tabs'], ['展开侧栏', 'Expand sidebar'], ['收起侧栏', 'Collapse sidebar'],
+    ['将 PatSight 接入你的 Agent', 'Connect PatSight to your Agent'],
+    ['复制安装说明并配置 API Key，即可在自己的 Agent 中按需调用。任务与结果仍可在 PatSight 中查看。', 'Copy the installation instructions and configure an API key to call PatSight from your Agent. Tasks and results remain available in PatSight.'],
+    ['PATSIGHT 使用步骤', 'PATSIGHT GETTING STARTED'], ['复制安装说明', 'Copy instructions'], ['配置 API Key', 'Configure API key'],
+    ['发送给你的 Agent，按说明安装统一 PatSight Skill。', 'Send the instructions to your Agent to install the unified PatSight Skill.'],
+    ['前往 API Key 管理创建 Key，并在本地环境配置。', 'Create an API key in API keys and configure it in your local environment.'],
+    ['提供的能力', 'Available capabilities'], ['结构与活性提取', 'Structures and activities'], ['合成路线 / 反应提取', 'Synthesis / reaction extraction'], ['MolVision 结构识别', 'MolVision recognition'],
+    ['从专利中提取化合物结构与活性数据，便于后续分析。', 'Extract compound structures and activity data from patents for downstream analysis.'],
+    ['提取反应信息与相关结构；路线覆盖以实际支持为准。', 'Extract reaction information and associated structures; route coverage depends on actual availability.'],
+    ['识别图片中的单分子结构。', 'Recognize individual molecular structures in images.'],
+    ['提取专利中的 IUPAC 名称及相关分子结构。', 'Extract IUPAC names and associated molecular structures from patents.'],
+    ['API Key 用于在代码或 Agent 中调用 PatSight 能力。请妥善保管，不要在公开代码中暴露 Key。', 'Use API keys to access PatSight from code or an Agent. Keep them secure and out of public code.'],
+    ['＋ 创建新 Key', '+ Create key'], ['名称', 'Name'], ['创建日期', 'Created'], ['最近使用日期', 'Last used'], ['操作', 'Actions'], ['尚未使用', 'Not used yet'],
+    ['暂无 API Key，点击“创建新 Key”开始。', 'No API keys yet. Select Create key to get started.'],
+    ['创建新 Key', 'Create key'], ['取消', 'Cancel'], ['创建', 'Create'], ['Key 已创建', 'Key created'], ['复制新 Key', 'Copy new key'], ['复制', 'Copy'], ['完成', 'Done'],
+    ['仅为演示值。请勿在此原型输入或保存真实密钥。', 'Demo value only. Do not enter or store real credentials in this prototype.'],
+    ['例如：研发 Agent', 'e.g. Research Agent'], ['编辑名称', 'Rename'], ['保存', 'Save'], ['删除这个 Key？', 'Delete this key?'], ['删除', 'Delete'], ['确认删除', 'Confirm deletion'],
+    ['后，将无法再使用该 Key 调用服务。', 'will no longer be usable to call the service.'],
+    ['本页仅演示删除。真实撤销生效与在途任务处理规则待确认。', 'Deletion is simulated. Production revocation and in-flight task handling remain to be confirmed.'],
+    ['此处保留原产品入口位置，当前仅演示 Agent 集成', 'Original product entry. This prototype only demonstrates Agent integration.'],
+    ['已复制', 'Copied'], ['浏览器未允许复制，请手动选择文本复制', 'Clipboard access is unavailable. Select the text and copy it manually.'],
+    ['请输入名称', 'Enter a name'], ['名称已更新（演示）', 'Name updated (demo)'], ['Key 已删除（演示）', 'Key deleted (demo)'],
+    ['研发 Agent', 'Research Agent'], ['本地调试', 'Local testing'], ['复制 Key', 'Copy key'], ['删除 Key', 'Delete key'],
+    ['登录后继续', 'Log in to continue'], ['模拟登录并继续', 'Simulate login and continue'], ['返回 Agent 介绍', 'Back to Agent overview'],
+    ['这是登录流程演示，不是真实登录页，不收集账号、密码或密钥。正式上线时接入现有登录系统，并在登录成功后返回目标页面。', 'This is a login flow demo, not real authentication. It does not collect accounts, passwords or API keys. Production will use the existing login system and return to the selected page.'],
+    ['登录后进入 API Key 管理，创建和配置租户凭据。', 'Continue to API keys to create and configure tenant credentials.'],
+    ['登录后进入接入配置，获取并复制安装说明。', 'Continue to Setup to get and copy installation instructions.'],
+    ['登录演示 · PatSight', 'Login demo · PatSight'], ['Agent 集成配置 · PatSight', 'Agent setup · PatSight'], ['API Key 管理 · PatSight', 'API keys · PatSight'], ['切换语言', 'Change language']
+  ];
+  const translations = new Map(pairs);
+  const textRecords = new WeakMap();
+  const attributeRecords = new WeakMap();
+  const translate = text => language === 'en' ? translations.get(text) || text : text;
+  const choose = (zh, en) => language === 'en' ? en : zh;
+  const labels = {
+    title: ['看看 Agent 如何使用 PatSight', 'See PatSight in your Agent workflow'],
+    backendTitle: ['看看如何调用', 'See it in action'],
+    subtitle: ['从一句需求，到可继续分析的专利数据。', 'From a simple request to patent data ready for analysis.'],
+    backendSubtitle: ['完成接入后，用一个任务了解完整调用过程。', 'Follow one task from setup to results.'],
+    capability: ['结构与活性提取', 'Structures & activities'],
+    caseTitle: ['一句话，整理专利中的结构与活性', 'Turn a patent into structured compound and activity data'],
+    summary: ['让 Agent 调用 PatSight，提取化合物结构与活性数据，并整理成便于核对的结果。', 'Ask your Agent to use PatSight to extract compound structures and activity data into results you can review.'],
+    prompt: ['“请调用 PatSight，提取这篇专利中的化合物结构与活性数据，并保留来源。”', '“Use PatSight to extract compound structures and activity data from this patent, keeping the source references.”'],
+    install: ['安装 Skill', 'Install Skill'], key: ['配置 Key', 'Configure key'], task: ['发起任务', 'Run a task'], result: ['查看结果', 'Review results'],
+    watch: ['观看演示', 'Watch demo'], watchFull: ['查看交互演示', 'View interactive demo'],
+    posterPrompt: ['提取这篇专利中的结构与活性数据', 'Extract compound and activity data from this patent'],
+    ready: ['结果已整理', 'Results ready'], compound: ['化合物', 'Compound'], activity: ['活性', 'Activity'], source: ['来源', 'Source'],
+    playerCaption: ['查看交互演示', 'View interactive demo'], videoNote: ['从安装到获得结果 · 32 秒', 'From setup to results · 32-second walkthrough'],
+    reaction: ['反应信息整理', 'Organize reaction information'], reactionDesc: ['从专利中整理反应信息及相关结构，便于核对与后续分析。', 'Organize reaction information and associated structures from a patent for review.'], reactionNote: ['', ''],
+    vision: ['图片转分子结构', 'Convert an image to a molecular structure'], visionDesc: ['通过 MolVision 识别单分子结构图片，转为可继续处理的结构信息。', 'Use MolVision to recognize an individual molecular structure in an image.'], visionNote: ['', ''],
+    iupac: ['IUPAC 名称提取', 'Extract IUPAC names'], iupacDesc: ['整理专利中的 IUPAC 名称及相关分子结构，减少人工摘录。', 'Organize IUPAC names and associated molecular structures from patents.'], iupacNote: ['', ''],
+    dialogTitle: ['PatSight Skill：从接入到结果', 'PatSight Skill: from setup to results'], close: ['关闭演示', 'Close demo'],
+    pause: ['暂停', 'Pause'], play: ['播放', 'Play'], replay: ['重新播放', 'Replay'], seek: ['演示进度', 'Demo progress'],
+    footer: ['', ''],
+    start: ['获取安装说明 →', 'Get instructions →'], installHeading: ['将 PatSight Skill 安装到你的 Agent', 'Install PatSight Skill in your Agent'],
+    installDesc: ['将安装说明交给支持执行工具的 Agent，按说明完成安装。', 'Give the installation instructions to an Agent that supports tool execution and follow the setup steps.'],
+    installSuccess: ['✓ 安装完成', '✓ Installation complete'],
+    keyHeading: ['在本地配置 API Key', 'Configure an API key locally'], keyDesc: ['在 API Key 管理中创建 Key，并按正式说明在本地配置。不要把真实 Key 发到对话中。', 'Create a key in API keys and configure it locally using the official instructions. Never paste real keys into chat.'], keySuccess: ['✓ 本地配置完成', '✓ Local configuration complete'],
+    taskHeading: ['用自然语言发起任务', 'Describe your task in natural language'], taskDesc: ['Agent 选择 PatSight 能力并提交任务。真实计算前需确认输入与费用；已有任务只查询，不重复提交。', 'Your Agent selects the PatSight capability and submits the task. Confirm inputs and costs before live computation; query existing tasks without resubmitting.'], taskSuccess: ['✓ 任务处理中', '✓ Task processing'],
+    resultHeading: ['获得可核对的结构化结果', 'Review structured results with sources'], resultDesc: ['将结构与活性数据关联，保留来源；真实任务和结果仍可在 PatSight 中查看。', 'Link compounds to activity data and preserve sources. Live tasks and results remain available in PatSight.'],
+    sample: ['', ''],
+    structure: ['结构', 'Structure'], condition: ['实验条件', 'Assay conditions'], example: ['来源页', 'Source page'], resultSuccess: ['✓ 结果已就绪', '✓ Results ready']
+  };
+  const label = key => choose(...labels[key]);
+  const escaped = text => text.replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
+  const slot = (key, tag = 'span') => '<' + tag + ' data-ps-label="' + key + '">' + escaped(label(key)) + '</' + tag + '>';
+  const translateTree = parent => {
+    const walker = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      if (node.parentElement.closest('script,style,pre,code,[data-ps-label],#key-rows,#created-value,#revoke-name')) continue;
+      const text = node.textContent.trim();
+      if (!textRecords.has(node) && translations.has(text)) textRecords.set(node, { source: text, leading: node.textContent.match(/^\s*/)[0], trailing: node.textContent.match(/\s*$/)[0] });
+      const record = textRecords.get(node);
+      if (record) node.textContent = record.leading + translate(record.source) + record.trailing;
+    }
+    parent.querySelectorAll('[title],[aria-label],[placeholder]').forEach(element => {
+      let record = attributeRecords.get(element);
+      if (!record) { record = {}; attributeRecords.set(element, record); }
+      for (const attribute of ['title', 'aria-label', 'placeholder']) {
+        const value = element.getAttribute(attribute);
+        if (!record[attribute] && translations.has(value)) record[attribute] = value;
+        if (record[attribute]) element.setAttribute(attribute, translate(record[attribute]));
+      }
+    });
+  };
+  const languageControl = () => '<div class="ps-language" role="group" aria-label="Language / 语言"><button type="button" data-ps-language="zh">中文</button><button type="button" data-ps-language="en">EN</button></div>';
+  let mounted = false;
+  let dialog;
+  let frame = 0;
+  let elapsed = 0;
+  let playing = false;
+  let timer;
+  let trigger;
+  const caseMarkup = () => '<section class="ps-cases' + (backend ? ' ps-backend' : '') + '" id="agent-cases" aria-labelledby="ps-case-title">' +
+    '<div class="ps-case-heading"><div><span class="ps-kicker">AGENT IN ACTION</span><h2 id="ps-case-title" data-ps-label="' + (backend ? 'backendTitle' : 'title') + '">' + label(backend ? 'backendTitle' : 'title') + '</h2>' + slot(backend ? 'backendSubtitle' : 'subtitle', 'p') + '</div></div>' +
+    '<div class="ps-case-feature"><div class="ps-case-copy"><span class="ps-case-label" data-ps-label="capability">' + label('capability') + '</span>' + slot('caseTitle', 'h3') + slot('summary', 'p') + '<blockquote class="ps-prompt" data-ps-label="prompt">' + escaped(label('prompt')) + '</blockquote>' +
+    '<div class="ps-case-flow">' + slot('install') + '<i aria-hidden="true">→</i>' + slot('key') + '<i aria-hidden="true">→</i>' + slot('task') + '<i aria-hidden="true">→</i>' + slot('result') + '</div></div>' +
+    '<button class="ps-case-poster" type="button" data-ps-open aria-label="' + label('watchFull') + '"><div class="ps-poster-screen"><div class="ps-screen-bar"><span class="ps-screen-dot"></span><span class="ps-screen-dot"></span><span class="ps-screen-dot"></span><b>YOUR AGENT × PATSIGHT</b></div><div class="ps-screen-user" data-ps-label="posterPrompt">' + label('posterPrompt') + '</div><div class="ps-screen-status">✓ ' + slot('ready') + '</div><div class="ps-poster-table">' + slot('compound', 'b') + slot('activity', 'b') + slot('source', 'b') + '<span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div><div class="ps-poster-overlay"><span class="ps-play-icon" aria-hidden="true">▶</span><div class="ps-poster-caption">' + slot('playerCaption', 'strong') + slot('videoNote', 'small') + '</div></div></button></div>' +
+    '</section>';
+  const dialogMarkup = () => '<dialog class="ps-demo-dialog" id="ps-demo-dialog" aria-labelledby="ps-demo-title"><div class="ps-demo-top"><h2 id="ps-demo-title" data-ps-label="dialogTitle">' + label('dialogTitle') + '</h2><button class="ps-close" type="button" data-ps-close aria-label="' + label('close') + '">×</button></div><div class="ps-demo-stage"><div class="ps-demo-meta"><span>YOUR AGENT × PATSIGHT</span><span class="ps-demo-badge" data-ps-label="videoNote">' + label('videoNote') + '</span></div><div class="ps-demo-window" id="ps-demo-window"></div></div><div class="ps-player-controls"><input class="ps-player-progress" id="ps-player-progress" type="range" min="0" max="32" value="0" step="1" aria-label="' + label('seek') + '"><div class="ps-player-row"><button class="ps-player-toggle" type="button" id="ps-player-toggle"></button><span class="ps-player-time" id="ps-player-time"></span></div><div class="ps-player-chapters">' + ['install','key','task','result'].map((key, index) => '<button type="button" data-ps-chapter="' + index + '">' + (index + 1) + '. ' + slot(key) + '</button>').join('') + '</div></div><div class="ps-demo-footer">' + '<a href="06-login.html?next=02-agent-connect.html" data-ps-label="start">' + label('start') + '</a></div></dialog>';
+  const renderFrame = () => {
+    if (!dialog) return;
+    const keys = ['install', 'key', 'task', 'result'];
+    const current = keys[frame];
+    let content = '<div class="ps-screen-bar"><span class="ps-screen-dot"></span><span class="ps-screen-dot"></span><span class="ps-screen-dot"></span><b>' + (frame < 2 ? 'PATSIGHT / SETUP' : 'YOUR AGENT / PATSIGHT SKILL') + '</b></div>' + slot(current + 'Heading', 'h3') + slot(current + 'Desc', 'p');
+    if (frame === 1) content += '<code>demo_only_••••••••</code>';
+    if (frame === 2) content += '<div class="ps-demo-task">' + slot('prompt') + '</div>';
+    if (frame === 3) content += '<div class="ps-demo-result"><table><caption>' + label('sample') + '</caption><thead><tr>' + ['compound','structure','activity','condition','source'].map(key => '<th>' + label(key) + '</th>').join('') + '</tr></thead><tbody><tr><td>Demo-01</td><td>CCO</td><td>—</td><td>—</td><td>' + label('example') + ' 12</td></tr><tr><td>Demo-02</td><td>CC(=O)O</td><td>—</td><td>—</td><td>' + label('example') + ' 18</td></tr></tbody></table></div>';
+    content += '<div class="ps-demo-success" data-ps-label="' + current + 'Success">' + label(current + 'Success') + '</div>';
+    document.getElementById('ps-demo-window').innerHTML = content;
+    document.querySelectorAll('[data-ps-chapter]').forEach(button => {
+      if (Number(button.dataset.psChapter) === frame) button.setAttribute('aria-current', 'step');
+      else button.removeAttribute('aria-current');
+    });
+    updatePlayer();
+  };
+  const updatePlayer = () => {
+    if (!dialog) return;
+    document.getElementById('ps-player-progress').value = elapsed;
+    document.getElementById('ps-player-time').textContent = '00:' + String(elapsed).padStart(2, '0') + ' / 00:32';
+    document.getElementById('ps-player-toggle').textContent = label(playing ? 'pause' : elapsed === 32 ? 'replay' : 'play');
+  };
+  const pause = () => { playing = false; clearInterval(timer); updatePlayer(); };
+  const play = () => {
+    if (elapsed === 32) { elapsed = 0; frame = 0; renderFrame(); }
+    playing = true;
+    clearInterval(timer);
+    timer = setInterval(() => {
+      if (document.hidden) return;
+      elapsed = Math.min(32, elapsed + 1);
+      const nextFrame = Math.min(3, Math.floor(elapsed / 8));
+      if (nextFrame !== frame) { frame = nextFrame; renderFrame(); }
+      if (elapsed === 32) pause();
+      updatePlayer();
+    }, 1000);
+    updatePlayer();
+  };
+  const updateLinks = () => {
+    document.querySelectorAll('a[href]').forEach(anchor => {
+      const original = anchor.getAttribute('href');
+      if (!/^(?:\.\/)?0[123567]-[^/?#]+\.html(?:[?#]|$)/.test(original)) return;
+      const address = new URL(original, location.href);
+      address.searchParams.set('lang', language);
+      anchor.setAttribute('href', address.pathname.split('/').pop() + address.search + address.hash);
+    });
+  };
+  const update = () => {
+    document.body.classList.toggle('ps-english', language === 'en');
+    if (backend || page === '06-login.html') { translateTree(document.body); document.title = translate(page === '06-login.html' ? '登录演示 · PatSight' : page === '02-agent-connect.html' ? 'Agent 集成配置 · PatSight' : 'API Key 管理 · PatSight'); }
+    document.querySelectorAll('[data-ps-label]').forEach(element => { const next = label(element.dataset.psLabel); if (element.textContent !== next) element.textContent = next; });
+    document.querySelectorAll('[data-ps-open]').forEach(button => button.setAttribute('aria-label', label('watchFull')));
+    document.querySelectorAll('[data-ps-language]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.psLanguage === language)));
+    document.querySelectorAll('nav button[aria-label="切换语言"],nav button[aria-label="Change language"]').forEach(button => button.setAttribute('aria-label', choose('切换语言', 'Change language')));
+    if (backend) { const toggle = document.getElementById('rail-toggle'); const expanded = toggle.getAttribute('aria-expanded') === 'true'; toggle.setAttribute('aria-label', choose(expanded ? '收起侧栏' : '展开侧栏', expanded ? 'Collapse sidebar' : 'Expand sidebar')); }
+    if (dialog) { dialog.querySelector('[data-ps-close]').setAttribute('aria-label', label('close')); document.getElementById('ps-player-progress').setAttribute('aria-label', label('seek')); renderFrame(); }
+    if (page === '03-api-keys.html' && typeof renderKeys === 'function') renderKeys();
+    updateLinks();
+  };
+  const setLanguage = next => {
+    language = next === 'en' ? 'en' : 'zh';
+    saveLocale();
+    document.documentElement.lang = language === 'en' ? 'en' : 'zh-CN';
+    const address = new URL(location.href);
+    address.searchParams.set('lang', language);
+    try { history.replaceState(null, '', address); } catch {}
+    update();
+  };
+  const openDemo = button => {
+    trigger = button;
+    pause();
+    elapsed = 0;
+    frame = 0;
+    renderFrame();
+    dialog.showModal();
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) play();
+  };
+  const mount = () => {
+    if (mounted || !document.body) return;
+    const destination = page === '01-home.html' ? document.querySelector('.hero-agent-entry') : page === '05-agent-intro.html' ? document.querySelector('main') : backend ? document.querySelector('.module-content') : document.querySelector('.card');
+    if (!destination) return;
+    mounted = true;
+    if (page === '01-home.html') destination.insertAdjacentHTML('beforeend', '<button class="ps-demo-link ps-home-demo" type="button" data-ps-open><span aria-hidden="true">▷</span>' + slot('watch') + '</button>');
+    if (page === '05-agent-intro.html') destination.insertAdjacentHTML('beforeend', caseMarkup());
+    if (page === '02-agent-connect.html') document.querySelector('.capabilities-simple').insertAdjacentHTML('beforebegin', caseMarkup());
+    if (backend) document.querySelector('.module-heading .row').insertAdjacentHTML('beforeend', languageControl());
+    if (page === '06-login.html') destination.insertAdjacentHTML('afterbegin', '<div style="display:flex;justify-content:flex-end;margin-bottom:16px">' + languageControl() + '</div>');
+    if (['01-home.html','02-agent-connect.html','05-agent-intro.html'].includes(page)) {
+      document.body.insertAdjacentHTML('beforeend', dialogMarkup());
+      dialog = document.getElementById('ps-demo-dialog');
+      dialog.addEventListener('close', () => { pause(); if (trigger && trigger.isConnected) trigger.focus(); });
+      dialog.querySelector('[data-ps-close]').onclick = () => dialog.close();
+      dialog.addEventListener('click', event => { if (event.target === dialog) { const bounds = dialog.getBoundingClientRect(); if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close(); } });
+      document.getElementById('ps-player-toggle').onclick = () => playing ? pause() : play();
+      document.getElementById('ps-player-progress').oninput = event => { elapsed = Number(event.target.value); frame = Math.min(3, Math.floor(elapsed / 8)); if (elapsed === 32) pause(); renderFrame(); };
+      document.querySelectorAll('[data-ps-chapter]').forEach(button => button.onclick = () => { elapsed = Number(button.dataset.psChapter) * 8; frame = Number(button.dataset.psChapter); renderFrame(); });
+      document.querySelectorAll('[data-ps-open]').forEach(button => button.onclick = () => openDemo(button));
+    }
+    document.querySelectorAll('[data-ps-language]').forEach(button => button.onclick = () => setLanguage(button.dataset.psLanguage));
+    if (page === '02-agent-connect.html') document.getElementById('copy-skill').onclick = () => copyText(choose(installationDraft, 'Install the unified PatSight Skill and existing PatSight CLI using the official instructions. Configure your tenant API key securely in your local environment.\n\nProduct review draft only: verified installation resources and key authentication specifications are not yet available. Do not invent installation commands.\n\nConfirm inputs, capability and possible tenant Credits costs before submitting computations. Query existing task IDs without resubmitting. Preserve sources and assay conditions; never invent results or billing. MolVision Agent access and route coverage remain to be confirmed. Never request or display real keys in chat.'));
+    if (backend) { const toggle = document.getElementById('rail-toggle'); toggle.addEventListener('click', () => toggle.setAttribute('aria-label', choose(toggle.getAttribute('aria-expanded') === 'true' ? '收起侧栏' : '展开侧栏', toggle.getAttribute('aria-expanded') === 'true' ? 'Collapse sidebar' : 'Expand sidebar'))); }
+    if (page === '06-login.html') document.getElementById('continue').onclick = () => { const requested = parameters.get('next'); const target = ['02-agent-connect.html','03-api-keys.html'].includes(requested) ? requested : '02-agent-connect.html'; location.href = target + '?lang=' + language; };
+    update();
+    if (location.hash === '#agent-cases') document.getElementById('agent-cases')?.scrollIntoView();
+  };
+  window.PatSightDemo = { t: choose, translate, language: () => language };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount);
+  else mount();
+  const observer = new MutationObserver(records => {
+    if (!mounted) mount();
+    if (records.some(record => record.type === 'attributes' && record.attributeName === 'lang')) {
+      const next = document.documentElement.lang.startsWith('en') ? 'en' : 'zh';
+      if (next !== language) setLanguage(next);
+    }
+    if (records.some(record => record.type === 'childList' && !record.target.closest?.('.ps-demo-dialog,.ps-cases'))) updateLinks();
+  });
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+  const watchApp = () => { const app = document.getElementById('app'); if (app) observer.observe(app, { childList: true, subtree: true }); };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watchApp);
+  else watchApp();
+  window.addEventListener('pagehide', pause);
+  window.addEventListener('storage', event => { if (event.key === 'patsight-locale' && event.newValue && event.newValue !== language) { if (backend || page === '06-login.html') setLanguage(event.newValue); else location.reload(); } });
+})();
+
+</script>
+<style id="patsight-evaluation-style">
+.ps-evaluation{width:min(1200px,100%);margin:0 auto;padding:0 24px 64px;color:#001f5d;font-family:Inter,"Microsoft YaHei",system-ui,sans-serif;scroll-margin-top:90px}.ps-eval-heading{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:22px}.ps-eval-heading h2{font-size:25px;font-weight:700;line-height:1.5;margin:5px 0 8px}.ps-eval-heading p{font-size:14px;line-height:1.8;color:#71809a;margin:0}.ps-eval-status{color:#8693a8;background:#f3f5f9;border:1px solid #e5eaf2;border-radius:6px;padding:6px 10px;font-size:11px;white-space:nowrap}.ps-eval-panel{border:1px solid #e4eaf6;border-radius:16px;background:#fff;overflow:hidden}.ps-eval-context{padding:19px 24px;border-bottom:1px solid #e4eaf6;background:#f8faff;display:flex;align-items:flex-start;gap:12px;font-size:13px;line-height:1.8;color:#617594}.ps-eval-context b{color:#375180;font-weight:600;flex-shrink:0}.ps-eval-scroll{overflow-x:auto}.ps-eval-table{width:100%;min-width:710px;border-collapse:collapse;font-size:13px;line-height:1.7;text-align:left}.ps-eval-table caption{text-align:left;padding:16px 24px 0;color:#8391a7;font-size:11px;caption-side:bottom;padding-bottom:16px}.ps-eval-table th,.ps-eval-table td{padding:17px 24px;border-bottom:1px solid #edf1f7;vertical-align:top}.ps-eval-table thead th{font-weight:600;color:#39547d;background:#fff;font-size:14px}.ps-eval-table thead th:first-child{width:28%;font-size:12px;color:#8190a7}.ps-eval-table th small{display:block;font-weight:400;color:#8a97ad;font-size:11px;margin-top:5px}.ps-eval-table thead th:nth-child(4){background:#f0f5ff;border-top:2px solid #3765e7}.ps-eval-table tbody td:nth-child(4){background:#f8faff}.ps-eval-table tbody th{font-weight:500;color:#425a7f}.ps-eval-table tbody th small{font-size:10px;line-height:1.7}.ps-eval-table tbody tr:last-child th,.ps-eval-table tbody tr:last-child td{border-bottom:0}.ps-eval-pending{font-size:12px;color:#95a1b4}.ps-eval-foot{padding:16px 24px;border-top:1px solid #e4eaf6;font-size:12px;line-height:1.8;color:#7888a0;background:#fcfdff}.ps-eval-method{margin-top:17px;border:1px solid #e4eaf6;border-radius:10px;background:#fff;padding:16px 20px}.ps-eval-method summary{cursor:pointer;color:#49668f;font-size:13px;line-height:1.7;font-weight:500}.ps-eval-method summary:focus-visible{outline:2px solid #1343d4;outline-offset:4px}.ps-eval-method-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px 32px;padding-top:20px}.ps-eval-method-grid h3{font-size:12px;font-weight:600;color:#365380;margin:0 0 6px}.ps-eval-method-grid p{font-size:12px;line-height:1.9;color:#7b8ca6;margin:0}.ps-eval-method-note{margin:18px 0 0;padding-top:14px;border-top:1px solid #edf1f7;color:#8c9aaf;font-size:11px;line-height:1.8}@media(max-width:720px){.ps-evaluation{padding:0 24px 40px}.ps-eval-heading{align-items:flex-start;flex-direction:column;gap:12px}.ps-eval-heading h2{font-size:22px}.ps-eval-context{padding:16px 18px;flex-direction:column;gap:4px}.ps-eval-table th,.ps-eval-table td{padding:14px 18px}.ps-eval-method-grid{grid-template-columns:1fr;gap:18px}.ps-eval-foot{padding:16px 18px}}
+
+.ps-eval-capability{border:1px solid #e4eaf6;border-radius:12px;background:white;overflow:hidden;margin-bottom:14px}.ps-eval-capability>summary{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:19px 24px;cursor:pointer;list-style:none}.ps-eval-capability>summary::-webkit-details-marker{display:none}.ps-eval-capability>summary small{display:block;font-size:12px;line-height:1.7;color:#8493ab;margin-top:5px}.ps-eval-cap-title{font-size:16px;line-height:1.5;font-weight:600;color:#35507b}.ps-eval-capability[open]>summary{border-bottom:1px solid #e4eaf6;background:#f8faff}.ps-eval-chevron{font-size:20px;color:#8b9ebd;flex-shrink:0}.ps-eval-capability[open] .ps-eval-chevron{transform:rotate(180deg)}.ps-eval-capability>summary:focus-visible,.ps-eval-scroll:focus-visible{outline:2px solid #1343d4;outline-offset:-3px}.ps-eval-table{min-width:800px;table-layout:fixed}.ps-eval-table thead th:first-child{width:34%}.ps-eval-table thead th:not(:first-child){width:22%}.ps-eval-disclaimer{font-size:11px;color:#8a99af;line-height:1.8;margin:12px 0}.ps-evaluation>.ps-eval-foot{border:0;border-radius:8px;background:#f5f8ff;padding:13px 18px}@media(max-width:720px){.ps-eval-capability>summary{padding:16px 18px}.ps-eval-cap-title{font-size:15px}.ps-eval-table{min-width:760px}.ps-eval-table th,.ps-eval-table td{padding:13px 16px}}
+
+.ps-eval-score{display:block;font-size:22px;line-height:1.4;color:#35507b;font-variant-numeric:tabular-nums}.ps-eval-count{display:block;margin-top:5px;font-size:11px;color:#71809a}.ps-eval-status{white-space:normal;color:#82632a;background:#fff8e9;border-color:#eeddb8}.ps-eval-method-body{font-size:12px;line-height:1.9;color:#617594}.ps-eval-method-body p{margin:14px 0 0}.ps-case-flow{margin-bottom:0}
+.ps-evaluation>[data-eval-label="comparisonNote"]{font-size:11px;line-height:1.8;color:#8a99af;margin:12px 0}.ps-eval-table td>[data-eval-label="pending"]{font-size:12px;color:#95a1b4}
+</style>
+<script id="patsight-evaluation-runtime">
+(() => {
+  const chartMode = !location.pathname.includes('-table');
+  const words = {
+    supported: ['支持接入', 'Works with'],
+    hero: ['在你的 Agent 中，高效提取专利数据', 'Extract patent data directly in your Agent'],
+    heroDesc: ['通过 Claude Code 或 Codex 调用 PatSight，将专利中的分子结构、活性与反应信息转为可核对、可复用的结构化数据。', 'Use PatSight through Claude Code or Codex to turn patent structures, activities and reactions into structured data you can review and reuse.'],
+    title: ['接入 PatSight，提取效果有何不同？', 'How does PatSight change extraction results?'],
+    subtitle: ['四项能力，直观比较提取准确率。', 'Compare extraction accuracy across four capabilities.'],
+    points: ['个百分点', 'pp'], gainDesc: ['较 Claude Code / Codex 中较高的准确率', 'vs. the higher Claude Code / Codex accuracy'],
+    metric: ['评测指标', 'Evaluation metric'],
+    standalone: ['Claude Code', 'Claude Code'], standaloneDesc: ['claude-opus-5-5', 'claude-opus-5-5'],
+    direct: ['Codex', 'Codex'], directDesc: ['gpt-6.1-sol', 'gpt-6.1-sol'],
+    integrated: ['Agent + PatSight', 'Agent + PatSight'], integratedDesc: ['claude-opus-5-5', 'claude-opus-5-5'],
+    modelNote: ['模型版本：Claude Code 为 claude-opus-5-5，Codex 为 gpt-6.1-sol。Agent + PatSight 经 Claude Code（claude-opus-5-5）调用。', 'Models: Claude Code uses claude-opus-5-5. Codex uses gpt-6.1-sol. Agent + PatSight is called through Claude Code (claude-opus-5-5).'],
+    structures: ['结构提取准确率', 'Structure extraction accuracy'], structuresDesc: ['正确的分子结构', 'Correct molecular structures'],
+    activities: ['活性提取准确率', 'Activity extraction accuracy'], activitiesDesc: ['正确的数值、单位、条件及化合物关联', 'Correct values, units, conditions and compound links'],
+    reactions: ['反应提取准确率', 'Reaction extraction accuracy'], reactionsDesc: ['正确的反应物、产物及对应关系', 'Correct reactants, products and relationships'],
+    iupac: ['IUPAC 名称提取准确率', 'IUPAC name extraction accuracy'], iupacDesc: ['与原文一致的名称', 'Names matching the source text'],
+    structuresModule: ['模块：结构与活性提取', 'Module: Structures & activities'],
+    activitiesModule: ['模块：结构与活性提取', 'Module: Structures & activities'],
+    reactionsModule: ['模块：反应提取', 'Module: Reaction extraction'],
+    iupacModule: ['模块：IUPAC Extract', 'Module: IUPAC Extract'],
+    chart: ['柱状图版', 'Chart view'], table: ['数值表格版', 'Table view'],
+    quickTitle: ['开始使用 PatSight', 'Start using PatSight'], quickDesc: ['从接入到结果，选择你的下一步。', 'Choose your next step, from setup to results.'],
+    setup: ['接入配置', 'Set up integration'], setupDesc: ['获取 Skill 安装说明', 'Get Skill installation instructions'],
+    keys: ['API Key 管理', 'Manage API keys'], keysDesc: ['创建并管理调用凭证', 'Create and manage your API keys'],
+    tasks: ['查看任务与结果', 'View tasks & results'], tasksDesc: ['进入 PatSight 工作台', 'Open the PatSight workspace']
+  };
+  const series = ['standalone','direct','integrated'];
+  const metrics = ['structures','activities','reactions','iupac'];
+  const scores = {structures:[72,75,94],activities:[64,67,91],reactions:[58,61,86],iupac:[81,83,96]};
+  const language = () => document.documentElement.lang.startsWith('en') ? 'en' : 'zh';
+  const text = key => words[key][language()==='en'?1:0];
+  const slot = (key,tag='span') => '<'+tag+' data-eval-label="'+key+'">'+text(key)+'</'+tag+'>';
+  const switcher = () => '<nav class="ps-view-switch" aria-label="Comparison view">'+[['chart','05-agent-intro-chart.html'],['table','05-agent-intro-table.html']].map(([key,url])=>'<a data-local-link href="'+url+'?lang='+language()+'"'+((key==='chart')===chartMode?' aria-current="page"':'')+'>'+slot(key)+'</a>').join('')+'</nav>';
+  const heading = () => '<div class="ps-eval-heading"><div><span class="ps-kicker">PERFORMANCE EVALUATION</span>'+slot('title','h2')+slot('subtitle','p')+'</div>'+switcher()+'</div>';
+  const chart = () => '<div class="ps-chart-grid">'+metrics.map(key=>{
+    const values=scores[key];
+    return '<article class="ps-chart-card"><header class="ps-chart-head"><div>'+slot(key,'h3')+'</div></header><div class="ps-chart-axis"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div><div class="ps-bars">'+values.map((score,i)=>'<div class="ps-bar-row ps-series-'+i+'"><span class="ps-series-name">'+slot(series[i])+'<small data-eval-label="'+series[i]+'Desc">'+text(series[i]+'Desc')+'</small></span><div class="ps-bar-track"><div class="ps-bar-fill" style="width:'+score+'%"></div></div><strong>'+score+'%</strong></div>').join('')+'</div></article>';
+  }).join('')+'</div>';
+  const table = () => '<div class="ps-eval-panel"><div class="ps-eval-scroll" role="region" aria-label="Extraction accuracy comparison" tabindex="0"><table class="ps-eval-table"><thead><tr><th scope="col">'+slot('metric')+'</th>'+series.map(key=>'<th scope="col">'+slot(key)+slot(key+'Desc','small')+'</th>').join('')+'</tr></thead><tbody>'+metrics.map(key=>'<tr><th scope="row">'+slot(key)+slot(key+'Module','small')+'</th>'+scores[key].map(value=>'<td><strong class="ps-eval-score">'+value+'%</strong><small class="ps-eval-count">'+value+' / 100</small></td>').join('')+'</tr>').join('')+'</tbody></table></div></div>';
+  const markup = () => '<section class="ps-evaluation" id="agent-evaluation" aria-labelledby="ps-eval-title">'+heading()+(chartMode?chart():table())+'<p class="ps-eval-models" data-eval-label="modelNote">'+text('modelNote')+'</p></section>';
+  const hero = () => '<section class="ps-intro-hero"><span class="ps-kicker">PATSIGHT × YOUR AGENT</span>'+slot('hero','h1')+slot('heroDesc','p')+'</section>';
+  const quick = () => '<section class="ps-quick" id="quick-actions">'+slot('quickTitle','h2')+slot('quickDesc','p')+'<div class="ps-quick-grid">'+[['setup','02-agent-connect.html','01'],['keys','03-api-keys.html','02'],['tasks','04-task-demo.html','03']].map(([key,target,num])=>'<a data-login-target="'+target+'" href="06-login.html?next='+target+'&lang='+language()+'"><small>'+num+'</small><div>'+slot(key,'h3')+slot(key+'Desc','p')+'</div><span aria-hidden="true">→</span></a>').join('')+'</div></section>';
+  let mounted = false;
+  const update = () => {
+    document.querySelectorAll('[data-eval-label]').forEach(el=>{el.textContent=text(el.dataset.evalLabel)});
+    document.querySelectorAll('.ps-chart-gain[title]').forEach(el=>{el.title=text('gainDesc')});
+    document.querySelectorAll('[data-local-link]').forEach(el=>{const url=new URL(el.href);url.searchParams.set('lang',language());el.href=url.href});
+    document.querySelectorAll('[data-login-target]').forEach(el=>{el.href='06-login.html?next='+el.dataset.loginTarget+'&lang='+language()});
+  };
+  const mount = () => {
+    if(mounted) return;
+    const cases=document.getElementById('agent-cases');
+    if(!cases) return;
+    mounted=true;
+    const main=cases.parentElement;
+    [...main.children].forEach(el=>{if(el!==cases)el.remove()});
+    cases.insertAdjacentHTML('beforebegin',hero()+markup());
+    document.querySelector('#agent-evaluation h2').id='ps-eval-title';
+    cases.insertAdjacentHTML('afterend',quick());
+    const copy=cases.querySelector('.ps-case-copy');
+    if(copy) copy.insertAdjacentHTML('beforeend','<small class="ps-demo-module" data-eval-label="structuresModule">'+text('structuresModule')+'</small>');
+    update();
+    if(location.hash)document.getElementById(location.hash.slice(1))?.scrollIntoView();
+  };
+  const observer=new MutationObserver(records=>{if(!mounted)mount();if(records.some(r=>r.type==='attributes'&&r.attributeName==='lang'))update()});
+  observer.observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+  const start=()=>{mount();const app=document.getElementById('app');if(app)observer.observe(app,{childList:true,subtree:true})};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();
+</script>
+<style id="patsight-review-style">
+.ps-intro-hero,.ps-quick{width:min(1200px,100%);margin:auto;padding:48px 24px;color:#001f5d;font-family:Inter,"Microsoft YaHei",system-ui,sans-serif}.ps-intro-hero h1{font-size:34px;line-height:1.35;font-weight:650;letter-spacing:-.6px;margin:14px 0}.ps-intro-hero p,.ps-quick>p{color:#71809a;font-size:14px;line-height:1.8}.ps-intro-hero>.ps-agent-pills{padding:0;min-width:0}.ps-agent-pills{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.ps-agent-pills span{font-size:12px;background:#edf3ff;border:1px solid #dce6fc;border-radius:6px;padding:7px 13px;color:#355786}.ps-evaluation{padding-bottom:48px}.ps-view-switch{display:flex;flex-shrink:0;border:1px solid #dce5f4;border-radius:8px;padding:4px;background:#fff;gap:3px}.ps-view-switch a{padding:7px 12px;font-size:12px;color:#7386a5;border-radius:5px;text-decoration:none;white-space:nowrap}.ps-view-switch a[aria-current]{background:#1343d4;color:#fff}.ps-chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.ps-chart-card{border:1px solid #e0e7f3;border-radius:14px;padding:24px;background:white}.ps-chart-card h3{font-size:15px;font-weight:600;margin:0 0 5px;color:#35507b}.ps-chart-card>p{font-size:11px;color:#8493aa;min-height:19px;margin:0 0 22px}.ps-chart-axis{display:flex;justify-content:space-between;margin:0 44px 10px 139px;font-size:10px;color:#9aa8bb}.ps-bar-row{display:grid;grid-template-columns:127px minmax(0,1fr) 40px;gap:12px;align-items:center;margin:15px 0;font-size:11px;color:#6e809e}.ps-bar-row>span{white-space:nowrap}.ps-bar-row strong{text-align:right;font-size:15px;color:#496283}.ps-bar-track{height:17px;background:#f1f4f9;border-radius:3px;overflow:hidden}.ps-bar-fill{height:100%;background:#b0bfd9;border-radius:3px}.ps-series-1 .ps-bar-fill{background:#8199c2}.ps-series-2 .ps-bar-fill{background:#1343d4}.ps-series-2>span,.ps-series-2 strong{font-weight:600;color:#1343d4}.ps-chart-card>small{display:block;border-top:1px solid #edf1f7;padding-top:14px;margin-top:20px;color:#8a99af;font-size:10px}.ps-eval-table tbody th small+small{margin-top:10px;color:#8a99af}.ps-quick{padding-top:8px;padding-bottom:64px}.ps-quick h2{font-size:25px;font-weight:600;margin:0 0 8px}.ps-quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}.ps-quick-grid>a{display:flex;align-items:center;gap:15px;padding:22px;border:1px solid #dde6f5;border-radius:12px;background:white;text-decoration:none;color:#35507b;transition:border-color .15s,box-shadow .15s}.ps-quick-grid>a:hover{border-color:#1343d4;box-shadow:0 4px 18px #1343d40d}.ps-quick-grid>a>small{font-size:11px;color:#8ca1c4;align-self:flex-start}.ps-quick-grid h3{font-size:15px;font-weight:600;margin:0 0 7px}.ps-quick-grid p{font-size:11px;color:#8796ad;margin:0}.ps-quick-grid>a>span{margin-left:auto;color:#1343d4}.ps-demo-module{display:block;margin-top:18px;font-size:11px;color:#8493aa}.ps-cases{padding-bottom:48px!important}.ps-eval-table thead th:first-child{width:34%}.ps-eval-table thead th:not(:first-child){width:22%}@media(max-width:760px){.ps-intro-hero{padding-top:30px;padding-bottom:32px}.ps-intro-hero h1{font-size:27px}.ps-chart-grid,.ps-quick-grid{grid-template-columns:1fr}.ps-chart-card{padding:20px 16px}.ps-bar-row{grid-template-columns:118px minmax(0,1fr) 35px;gap:8px}.ps-chart-axis{margin-left:126px;margin-right:43px}.ps-eval-heading{align-items:flex-start}.ps-quick{padding-bottom:40px}}
+</style>
+<style id="patsight-chart-refinement">
+.ps-chart-grid{gap:20px}.ps-chart-card{padding:24px 26px;border-color:#d7e1f1;box-shadow:0 3px 16px #173b7605}.ps-chart-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:25px}.ps-chart-head h3{font-size:15px;line-height:1.6;margin-bottom:5px}.ps-chart-head p{font-size:11px;line-height:1.7;color:#7b8ca5;margin:0;max-width:290px}.ps-chart-result{text-align:right;flex-shrink:0}.ps-chart-result>strong{display:block;font-size:34px;line-height:1.1;letter-spacing:-1px;color:#1343d4}.ps-chart-result>strong>span{font-size:18px;letter-spacing:0;margin-left:2px}.ps-chart-result>small{display:block;font-size:9px;color:#4566ba;margin-top:5px}.ps-chart-axis{margin-left:151px;margin-right:50px;margin-bottom:12px;color:#8091ab}.ps-bar-row{grid-template-columns:139px minmax(0,1fr) 38px;margin:18px 0;gap:12px;font-size:11px}.ps-bar-row>span{display:flex;align-items:center;gap:7px;color:#263b5c}.ps-bar-row>span:before{content:'';width:7px;height:7px;flex-shrink:0;border-radius:2px;background:#344866}.ps-bar-track{height:22px;border-radius:4px;background:repeating-linear-gradient(to right,transparent 0,transparent calc(25% - 1px),#dfe6f0 calc(25% - 1px),#dfe6f0 25%),#f2f5fa}.ps-bar-fill{background:#344866;border-radius:4px}.ps-series-1 .ps-bar-fill,.ps-series-1>span:before{background:#df8c27}.ps-series-2 .ps-bar-fill{background:linear-gradient(90deg,#285de5,#1343d4)}.ps-series-2>span:before{background:#1343d4}.ps-series-2>span,.ps-series-2 strong{color:#1343d4}.ps-bar-row strong{font-size:14px;color:#344866;font-variant-numeric:tabular-nums}.ps-series-1 strong{color:#a25c09}.ps-chart-gain{display:flex;align-items:center;gap:9px;margin:23px 0 0;padding:10px 12px;border-radius:6px;background:#edf3ff;color:#536b9d;font-size:10px;line-height:1.6}.ps-chart-gain>strong{color:#1343d4;font-size:12px;white-space:nowrap}.ps-chart-card>small{margin-top:15px;padding-top:12px}@media(max-width:760px){.ps-chart-card{padding:22px 16px}.ps-chart-head{gap:10px}.ps-chart-head h3{font-size:14px}.ps-chart-head p{max-width:220px}.ps-chart-result>strong{font-size:30px}.ps-bar-row{grid-template-columns:124px minmax(0,1fr) 34px;gap:8px}.ps-chart-axis{margin-left:132px;margin-right:42px;font-size:9px}.ps-chart-gain{flex-wrap:wrap;gap:3px 8px}}
+</style>
+<style id="patsight-cohesive-chart">
+.ps-chart-card{padding:23px 25px;border:1px solid #e0e7f2;border-radius:12px;box-shadow:none;background:#fff}.ps-chart-head{align-items:flex-start;gap:12px;margin-bottom:27px}.ps-chart-head h3{font-size:15px;color:#274569}.ps-chart-head p{color:#8a98ad;font-size:11px}.ps-chart-result{display:none}.ps-chart-head .ps-chart-gain{flex-shrink:0;margin:1px 0 0;padding:5px 8px;background:#edf3ff;border-radius:5px;color:#1343d4;display:block}.ps-chart-head .ps-chart-gain>strong{font-size:11px;color:#1343d4;font-weight:600}.ps-chart-axis{color:#9aa7b9;font-size:9px}.ps-bar-row{margin:19px 0;grid-template-columns:139px minmax(0,1fr) 38px}.ps-bar-row>span,.ps-bar-row strong{color:#687d9b;font-weight:400}.ps-bar-row>span:before{display:none}.ps-bar-fill{background:#aebcd1;border-radius:3px}.ps-series-1 .ps-bar-fill{background:#7694bf}.ps-series-2 .ps-bar-fill{background:#1343d4}.ps-series-1>span,.ps-series-1 strong{color:#5b779d}.ps-series-2>span,.ps-series-2 strong{color:#1343d4;font-weight:600}.ps-bar-track,.ps-series-2 .ps-bar-track{height:16px;border-radius:3px;background:repeating-linear-gradient(to right,transparent 0,transparent calc(25% - 1px),#e5ebf4 calc(25% - 1px),#e5ebf4 25%),#f6f8fb}.ps-chart-card>small{color:#95a1b3;border-top-color:#edf1f7;font-size:10px;margin-top:21px;padding-top:12px}.ps-eval-table thead th:nth-child(2),.ps-eval-table thead th:nth-child(3){background:#fff;color:#39547d}.ps-eval-table thead th:nth-child(4){background:#edf3ff;color:#1343d4;border-top-color:#1343d4}.ps-eval-table tbody td:nth-child(2) .ps-eval-score{color:#687d9b}.ps-eval-table tbody td:nth-child(3) .ps-eval-score{color:#5b779d}.ps-eval-table tbody td:nth-child(4){background:#f7faff}.ps-eval-table tbody td:nth-child(4) .ps-eval-score{color:#1343d4}@media(max-width:760px){.ps-chart-card{padding:20px 16px}.ps-chart-head{gap:9px}.ps-chart-head h3{font-size:14px}.ps-chart-head p{max-width:220px}.ps-bar-row{grid-template-columns:124px minmax(0,1fr) 34px;gap:8px}.ps-chart-head .ps-chart-gain{padding:4px 6px}}
+</style>
+<style id="patsight-hero-spacing-fix">
+main>section.ps-intro-hero{padding-bottom:30px}main>section.ps-intro-hero>div.ps-agent-pills{display:flex;align-items:center;flex-wrap:wrap;gap:9px;padding:0;margin:16px 0 0;min-width:0;background:transparent;border:0;box-shadow:none;border-radius:0}main>section.ps-intro-hero>div.ps-agent-pills>span{padding:0;border:0;border-radius:0;background:transparent;font-size:12px;line-height:1.7;letter-spacing:0;color:#526c92}main>section.ps-intro-hero>div.ps-agent-pills>span[data-eval-label="supported"]{color:#8b98aa;margin-right:2px}main>section.ps-intro-hero>div.ps-agent-pills>i{font-style:normal;color:#bcc7d6;font-size:12px}.ps-intro-hero>p{margin-bottom:0}@media(max-width:760px){main>section.ps-intro-hero{padding-bottom:26px}main>section.ps-intro-hero>div.ps-agent-pills{margin-top:13px;gap:7px}}
+</style>
+<style id="patsight-final-polish">
+.ps-chart-head{margin-bottom:20px}.ps-chart-head h3{margin:0;font-size:15px;line-height:1.6}.ps-chart-card>small{font-size:10px;line-height:1.6;color:#8d9bb0;margin-top:20px;padding-top:11px}.ps-eval-table tbody th small{margin-top:7px;font-size:10px;color:#8d9bb0}.ps-quick-grid>a:first-child{background:#1343d4;border-color:#1343d4;color:#fff;box-shadow:0 5px 16px #1343d414}.ps-quick-grid>a:first-child h3{color:#fff}.ps-quick-grid>a:first-child p{color:#d6e2ff}.ps-quick-grid>a:first-child>small{color:#b8ccff}.ps-quick-grid>a:first-child>span{color:#fff}.ps-quick-grid>a:first-child:hover{background:#103bbb;border-color:#103bbb;box-shadow:0 6px 20px #1343d426}.ps-quick-grid>a:not(:first-child){background:#fff;box-shadow:none;border-color:#e0e7f2}.ps-quick-grid>a:not(:first-child):hover{border-color:#9eb4dd;background:#fafcff}.ps-quick-grid>a:focus-visible{outline:3px solid #86a8ff;outline-offset:4px}
+.ps-bar-row>.ps-series-name{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;line-height:1.25;white-space:nowrap}
+.ps-bar-row>.ps-series-name small{font-size:9px;line-height:1.3;font-weight:400;color:#8d9bb0}
+.ps-series-2>.ps-series-name small{color:#7d93c4;font-weight:400}
+.ps-eval-table thead th small{display:block;margin-top:4px;font-size:10px;line-height:1.4;font-weight:500;color:#8d9bb0}
+.ps-eval-table thead th:nth-child(4) small{color:#6d86c2}
+.ps-eval-models{margin:14px 2px 0;font-size:11px;line-height:1.7;color:#8d9bb0}
+</style>
+</head>
+  <body>
+    <div id="app"></div>
+
+  </body>
+</html>
