@@ -379,7 +379,7 @@ main > section:first-child > div:last-child > div > div + div{padding-top:28px;b
     document.querySelectorAll('[data-series-label]').forEach(el=>el.setAttribute('aria-label',text(el.dataset.seriesLabel)+': '+el.dataset.score+'%'));
     document.querySelectorAll('.ps-chart-gain[title]').forEach(el=>{el.title=text('gainDesc')});
     document.querySelectorAll('[data-local-link]').forEach(el=>{const url=new URL(el.href);url.searchParams.set('lang',language());el.href=url.href});
-    document.querySelectorAll('[data-login-target]').forEach(el=>{el.href='06-login.html?lang='+language()+(el.dataset.loginTarget==='04-task-demo.html'?'':'&next='+el.dataset.loginTarget)});
+    document.querySelectorAll('[data-login-target]').forEach(el=>{el.href='06-login.html?lang='+language()+'&next='+el.dataset.loginTarget});
   };
   const mount = () => {
     if(mounted) return;
