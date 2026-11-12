@@ -41,6 +41,7 @@
     ['研发 Agent', 'Research Agent'], ['本地调试', 'Local testing'], ['复制 Key', 'Copy key'], ['删除 Key', 'Delete key'],
     ['登录后继续', 'Log in to continue'], ['模拟登录并继续', 'Simulate login and continue'], ['返回 Agent 介绍', 'Back to Agent overview'],
     ['这是登录流程演示，不是真实登录页，不收集账号、密码或密钥。正式上线时接入现有登录系统，并在登录成功后返回目标页面。', 'This is a login flow demo, not real authentication. It does not collect accounts, passwords or API keys. Production will use the existing login system and return to the selected page.'],
+    ['登录后进入 PatSight 工作台，查看任务与结果。', 'Continue to the PatSight workspace to view tasks and results.'],
     ['登录后进入 API Key 管理，创建和配置租户凭据。', 'Continue to API keys to create and configure tenant credentials.'],
     ['登录后进入接入配置，获取并复制安装说明。', 'Continue to Setup to get and copy installation instructions.'],
     ['登录演示 · PatSight', 'Login demo · PatSight'], ['Agent 集成配置 · PatSight', 'Agent setup · PatSight'], ['API Key 管理 · PatSight', 'API keys · PatSight'], ['切换语言', 'Change language']
@@ -217,7 +218,7 @@
     document.querySelectorAll('[data-ps-language]').forEach(button => button.onclick = () => setLanguage(button.dataset.psLanguage));
     if (page === '02-agent-connect.html') document.getElementById('copy-skill').onclick = () => copyText(choose(installationDraft, 'Install the unified PatSight Skill and existing PatSight CLI using the official instructions. Configure your tenant API key securely in your local environment.\n\nProduct review draft only: verified installation resources and key authentication specifications are not yet available. Do not invent installation commands.\n\nConfirm inputs, capability and possible tenant Credits costs before submitting computations. Query existing task IDs without resubmitting. Preserve sources and assay conditions; never invent results or billing. MolVision Agent access and route coverage remain to be confirmed. Never request or display real keys in chat.'));
     if (backend) { const toggle = document.getElementById('rail-toggle'); toggle.addEventListener('click', () => toggle.setAttribute('aria-label', choose(toggle.getAttribute('aria-expanded') === 'true' ? '收起侧栏' : '展开侧栏', toggle.getAttribute('aria-expanded') === 'true' ? 'Collapse sidebar' : 'Expand sidebar'))); }
-    if (page === '06-login.html') document.getElementById('continue').onclick = () => { const requested = parameters.get('next'); const target = ['02-agent-connect.html','03-api-keys.html'].includes(requested) ? requested : '02-agent-connect.html'; location.href = target + '?lang=' + language; };
+    if (page === '06-login.html') document.getElementById('continue').onclick = () => { const requested = parameters.get('next'); const target = ['02-agent-connect.html','03-api-keys.html','04-task-demo.html'].includes(requested) ? requested : '02-agent-connect.html'; location.href = target + '?lang=' + language; };
     update();
     if (location.hash === '#agent-cases') document.getElementById('agent-cases')?.scrollIntoView();
   };
@@ -241,4 +242,4 @@
 })();
 
 </script>
-</head><body><main class="card"><a class="brand" href="01-home.html">PatSight</a><h1>登录后继续</h1><p id="destination">获取安装说明并配置你的 Agent。</p><p class="note">这是登录流程演示，不是真实登录页，不收集账号、密码或密钥。正式上线时接入现有登录系统，并在登录成功后返回目标页面。</p><button id="continue" class="action">模拟登录并继续</button><a class="back" href="05-agent-intro.html">返回 Agent 介绍</a></main><script>const requested=new URLSearchParams(location.search).get('next');const target=['02-agent-connect.html','03-api-keys.html'].includes(requested)?requested:'02-agent-connect.html';document.getElementById('destination').textContent=target==='03-api-keys.html'?'登录后进入 API Key 管理，创建和配置租户凭据。':'登录后进入接入配置，获取并复制安装说明。';document.getElementById('continue').onclick=()=>location.href=target;</script></body></html>
+</head><body><main class="card"><a class="brand" href="01-home.html">PatSight</a><h1>登录后继续</h1><p id="destination">获取安装说明并配置你的 Agent。</p><p class="note">这是登录流程演示，不是真实登录页，不收集账号、密码或密钥。正式上线时接入现有登录系统，并在登录成功后返回目标页面。</p><button id="continue" class="action">模拟登录并继续</button><a class="back" href="05-agent-intro.html">返回 Agent 介绍</a></main><script>const requested=new URLSearchParams(location.search).get('next');const target=['02-agent-connect.html','03-api-keys.html','04-task-demo.html'].includes(requested)?requested:'02-agent-connect.html';document.getElementById('destination').textContent=target==='04-task-demo.html'?'登录后进入 PatSight 工作台，查看任务与结果。':target==='03-api-keys.html'?'登录后进入 API Key 管理，创建和配置租户凭据。':'登录后进入接入配置，获取并复制安装说明。';document.getElementById('continue').onclick=()=>location.href=target;</script></body></html>

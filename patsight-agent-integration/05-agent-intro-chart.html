@@ -135,7 +135,7 @@ main > section:first-child > div:last-child > div > div + div{padding-top:28px;b
     watch: ['观看演示', 'Watch demo'], watchFull: ['查看交互演示', 'View interactive demo'],
     posterPrompt: ['提取这篇专利中的结构与活性数据', 'Extract compound and activity data from this patent'],
     ready: ['结果已整理', 'Results ready'], compound: ['化合物', 'Compound'], activity: ['活性', 'Activity'], source: ['来源', 'Source'],
-    playerCaption: ['查看交互演示', 'View interactive demo'], videoNote: ['从安装到获得结果 · 32 秒', 'From setup to results · 32-second walkthrough'],
+    playerCaption: ['查看交互演示', 'View interactive demo'], videoNote: ['32 秒了解完整使用流程', '32-second walkthrough of the workflow'],
     reaction: ['反应信息整理', 'Organize reaction information'], reactionDesc: ['从专利中整理反应信息及相关结构，便于核对与后续分析。', 'Organize reaction information and associated structures from a patent for review.'], reactionNote: ['', ''],
     vision: ['图片转分子结构', 'Convert an image to a molecular structure'], visionDesc: ['通过 MolVision 识别单分子结构图片，转为可继续处理的结构信息。', 'Use MolVision to recognize an individual molecular structure in an image.'], visionNote: ['', ''],
     iupac: ['IUPAC 名称提取', 'Extract IUPAC names'], iupacDesc: ['整理专利中的 IUPAC 名称及相关分子结构，减少人工摘录。', 'Organize IUPAC names and associated molecular structures from patents.'], iupacNote: ['', ''],
@@ -186,7 +186,7 @@ main > section:first-child > div:last-child > div > div + div{padding-top:28px;b
     '<div class="ps-case-heading"><div><span class="ps-kicker">AGENT IN ACTION</span><h2 id="ps-case-title" data-ps-label="' + (backend ? 'backendTitle' : 'title') + '">' + label(backend ? 'backendTitle' : 'title') + '</h2>' + slot(backend ? 'backendSubtitle' : 'subtitle', 'p') + '</div></div>' +
     '<div class="ps-case-feature"><div class="ps-case-copy"><span class="ps-case-label" data-ps-label="capability">' + label('capability') + '</span>' + slot('caseTitle', 'h3') + slot('summary', 'p') + '<blockquote class="ps-prompt" data-ps-label="prompt">' + escaped(label('prompt')) + '</blockquote>' +
     '<div class="ps-case-flow">' + slot('install') + '<i aria-hidden="true">→</i>' + slot('key') + '<i aria-hidden="true">→</i>' + slot('task') + '<i aria-hidden="true">→</i>' + slot('result') + '</div></div>' +
-    '<button class="ps-case-poster" type="button" data-ps-open aria-label="' + label('watchFull') + '"><div class="ps-poster-screen"><div class="ps-screen-bar"><span class="ps-screen-dot"></span><span class="ps-screen-dot"></span><span class="ps-screen-dot"></span><b>YOUR AGENT × PATSIGHT</b></div><div class="ps-screen-user" data-ps-label="posterPrompt">' + label('posterPrompt') + '</div><div class="ps-screen-status">✓ ' + slot('ready') + '</div><div class="ps-poster-table">' + slot('compound', 'b') + slot('activity', 'b') + slot('source', 'b') + '<span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div><div class="ps-poster-overlay"><span class="ps-play-icon" aria-hidden="true">▶</span><div class="ps-poster-caption">' + slot('playerCaption', 'strong') + slot('videoNote', 'small') + '</div></div></button></div>' +
+    '<button class="ps-case-poster" type="button" data-ps-open aria-label="' + label('watchFull') + '"><div class="ps-poster-screen"><div class="ps-screen-bar"><span class="ps-screen-dot"></span><span class="ps-screen-dot"></span><span class="ps-screen-dot"></span><b>YOUR AGENT × PATSIGHT</b></div><div class="ps-screen-user" data-ps-label="posterPrompt">' + label('posterPrompt') + '</div><div class="ps-screen-status">✓ ' + slot('ready') + '</div><div class="ps-poster-table">' + slot('compound', 'b') + slot('activity', 'b') + slot('source', 'b') + '<span>Compound 01</span><span>IC₅₀ · nM</span><span>PDF · 12</span><span>Compound 02</span><span>EC₅₀ · μM</span><span>PDF · 18</span><span>Compound 03</span><span>Kᵢ · nM</span><span>PDF · 24</span></div></div><div class="ps-poster-overlay"><span class="ps-play-icon" aria-hidden="true">▶</span><div class="ps-poster-caption">' + slot('playerCaption', 'strong') + slot('videoNote', 'small') + '</div></div></button></div>' +
     '</section>';
   const dialogMarkup = () => '<dialog class="ps-demo-dialog" id="ps-demo-dialog" aria-labelledby="ps-demo-title"><div class="ps-demo-top"><h2 id="ps-demo-title" data-ps-label="dialogTitle">' + label('dialogTitle') + '</h2><button class="ps-close" type="button" data-ps-close aria-label="' + label('close') + '">×</button></div><div class="ps-demo-stage"><div class="ps-demo-meta"><span>YOUR AGENT × PATSIGHT</span><span class="ps-demo-badge" data-ps-label="videoNote">' + label('videoNote') + '</span></div><div class="ps-demo-window" id="ps-demo-window"></div></div><div class="ps-player-controls"><input class="ps-player-progress" id="ps-player-progress" type="range" min="0" max="32" value="0" step="1" aria-label="' + label('seek') + '"><div class="ps-player-row"><button class="ps-player-toggle" type="button" id="ps-player-toggle"></button><span class="ps-player-time" id="ps-player-time"></span></div><div class="ps-player-chapters">' + ['install','key','task','result'].map((key, index) => '<button type="button" data-ps-chapter="' + index + '">' + (index + 1) + '. ' + slot(key) + '</button>').join('') + '</div></div><div class="ps-demo-footer">' + '<a href="06-login.html?next=02-agent-connect.html" data-ps-label="start">' + label('start') + '</a></div></dialog>';
   const renderFrame = () => {
@@ -326,10 +326,10 @@ main > section:first-child > div:last-child > div > div + div{padding-top:28px;b
   const chartMode = !location.pathname.includes('-table');
   const words = {
     supported: ['支持接入', 'Works with'],
-    hero: ['在你的 Agent 中，高效提取专利数据', 'Extract patent data directly in your Agent'],
-    heroDesc: ['通过 Claude Code 或 Codex 调用 PatSight，将专利中的分子结构、活性与反应信息转为可核对、可复用的结构化数据。', 'Use PatSight through Claude Code or Codex to turn patent structures, activities and reactions into structured data you can review and reuse.'],
+    hero: ['为你的 Agent，添加专利数据提取能力', 'Add patent data extraction to your Agent'],
+    heroDesc: ['通过 PatSight Skill，让你常用的 Agent 提取专利中的结构、活性与反应信息，保留来源，支持后续构效关系分析与研发数据整理。', 'Use the PatSight Skill in your preferred Agent to extract structures, activities and reactions with sources for SAR analysis and research data organization.'],
     title: ['接入 PatSight，提取效果有何不同？', 'How does PatSight change extraction results?'],
-    subtitle: ['四项能力，直观比较提取准确率。', 'Compare extraction accuracy across four capabilities.'],
+    subtitle: ['四项提取能力，比较 Agent 直接提取与接入 PatSight 的结果。', 'Compare direct Agent extraction with PatSight across four capabilities.'],
     points: ['个百分点', 'pp'], gainDesc: ['较 Claude Code / Codex 中较高的准确率', 'vs. the higher Claude Code / Codex accuracy'],
     metric: ['评测指标', 'Evaluation metric'],
     standalone: ['Claude Code', 'Claude Code'], standaloneDesc: ['claude-opus-5-5', 'claude-opus-5-5'],
@@ -345,11 +345,18 @@ main > section:first-child > div:last-child > div > div + div{padding-top:28px;b
     reactionsModule: ['模块：反应提取', 'Module: Reaction extraction'],
     iupacModule: ['模块：IUPAC Extract', 'Module: IUPAC Extract'],
     chart: ['柱状图版', 'Chart view'], table: ['数值表格版', 'Table view'],
-    quickTitle: ['开始使用 PatSight', 'Start using PatSight'], quickDesc: ['从接入到结果，选择你的下一步。', 'Choose your next step, from setup to results.'],
-    setup: ['接入配置', 'Set up integration'], setupDesc: ['获取 Skill 安装说明', 'Get Skill installation instructions'],
-    keys: ['API Key 管理', 'Manage API keys'], keysDesc: ['创建并管理调用凭证', 'Create and manage your API keys'],
-    tasks: ['查看任务与结果', 'View tasks & results'], tasksDesc: ['进入 PatSight 工作台', 'Open the PatSight workspace']
+    quickTitle: ['开始使用 PatSight', 'Start using PatSight'], quickDesc: ['首次使用，从接入开始；已完成配置，可直接查看任务与结果。', 'Start with setup, or view tasks and results if you are already connected.'],
+    setup: ['首次使用：接入我的 Agent', 'First time? Connect your Agent'], setupDesc: ['获取安装说明 → 配置 Key → 发起任务', 'Install Skill → Configure key → Start a task'],
+    keys: ['管理我的 API Key', 'Manage my API keys'], keysDesc: ['创建并管理调用凭证', 'Create and manage your API keys'],
+    tasks: ['已接入：查看任务与结果', 'Connected? View tasks & results'], tasksDesc: ['进入 PatSight 工作台', 'Open the PatSight workspace']
   };
+  Object.assign(words, {
+    connectNow: ['接入我的 Agent', 'Connect my Agent'],
+    watchNow: ['观看调用演示', 'Watch the workflow'],
+    setupHint: ['适用于支持安装 Skill 的各类 Agent · 安装 Skill、配置 API Key 后即可使用', 'Works with Agents that support Skills · Install the Skill and configure an API key to start'],
+    resultBenefit: ['结构、活性与来源，整理到同一份结果中', 'Structures, activities and sources in one result'],
+    resultBenefitDesc: ['让 Agent 调用专业提取能力，减少逐页摘录，保留来源供后续核对与分析。', 'Let your Agent use specialist extraction, reduce manual transcription and keep sources for review.'],
+  });
   const series = ['standalone','direct','integrated'];
   const metrics = ['structures','activities','reactions','iupac'];
   const scores = {structures:[72,75,94],activities:[64,67,91],reactions:[58,61,86],iupac:[81,83,96]};
@@ -358,20 +365,21 @@ main > section:first-child > div:last-child > div > div + div{padding-top:28px;b
   const slot = (key,tag='span') => '<'+tag+' data-eval-label="'+key+'">'+text(key)+'</'+tag+'>';
   const switcher = () => '<nav class="ps-view-switch" aria-label="Comparison view">'+[['chart','05-agent-intro-chart.html'],['table','05-agent-intro-table.html']].map(([key,url])=>'<a data-local-link href="'+url+'?lang='+language()+'"'+((key==='chart')===chartMode?' aria-current="page"':'')+'>'+slot(key)+'</a>').join('')+'</nav>';
   const heading = () => '<div class="ps-eval-heading"><div><span class="ps-kicker">PERFORMANCE EVALUATION</span>'+slot('title','h2')+slot('subtitle','p')+'</div>'+switcher()+'</div>';
-  const chart = () => '<div class="ps-chart-grid">'+metrics.map(key=>{
+  const chart = () => '<div class="ps-shared-legend" role="group" aria-label="Comparison legend">'+series.map((key,i)=>'<span><i class="ps-legend-swatch ps-legend-'+i+'" aria-hidden="true"></i>'+slot(key)+'</span>').join('')+'</div><div class="ps-chart-grid">'+metrics.map(key=>{
     const values=scores[key];
-    return '<article class="ps-chart-card"><header class="ps-chart-head"><div>'+slot(key,'h3')+'</div></header><div class="ps-chart-axis"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div><div class="ps-bars">'+values.map((score,i)=>'<div class="ps-bar-row ps-series-'+i+'"><span class="ps-series-name">'+slot(series[i])+'<small data-eval-label="'+series[i]+'Desc">'+text(series[i]+'Desc')+'</small></span><div class="ps-bar-track"><div class="ps-bar-fill" style="width:'+score+'%"></div></div><strong>'+score+'%</strong></div>').join('')+'</div></article>';
+    return '<article class="ps-chart-card"><header class="ps-chart-head"><div>'+slot(key,'h3')+'</div></header><div class="ps-chart-axis"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div><div class="ps-bars">'+values.map((score,i)=>'<div class="ps-bar-row ps-series-'+i+'"><div class="ps-bar-track" role="img" data-series-label="'+series[i]+'" data-score="'+score+'" aria-label="'+text(series[i])+': '+score+'%"><div class="ps-bar-fill" style="width:'+score+'%"></div></div><strong>'+score+'%</strong></div>').join('')+'</div></article>';
   }).join('')+'</div>';
   const table = () => '<div class="ps-eval-panel"><div class="ps-eval-scroll" role="region" aria-label="Extraction accuracy comparison" tabindex="0"><table class="ps-eval-table"><thead><tr><th scope="col">'+slot('metric')+'</th>'+series.map(key=>'<th scope="col">'+slot(key)+slot(key+'Desc','small')+'</th>').join('')+'</tr></thead><tbody>'+metrics.map(key=>'<tr><th scope="row">'+slot(key)+slot(key+'Module','small')+'</th>'+scores[key].map(value=>'<td><strong class="ps-eval-score">'+value+'%</strong><small class="ps-eval-count">'+value+' / 100</small></td>').join('')+'</tr>').join('')+'</tbody></table></div></div>';
   const markup = () => '<section class="ps-evaluation" id="agent-evaluation" aria-labelledby="ps-eval-title">'+heading()+(chartMode?chart():table())+'<p class="ps-eval-models" data-eval-label="modelNote">'+text('modelNote')+'</p></section>';
-  const hero = () => '<section class="ps-intro-hero"><span class="ps-kicker">PATSIGHT × YOUR AGENT</span>'+slot('hero','h1')+slot('heroDesc','p')+'</section>';
-  const quick = () => '<section class="ps-quick" id="quick-actions">'+slot('quickTitle','h2')+slot('quickDesc','p')+'<div class="ps-quick-grid">'+[['setup','02-agent-connect.html','01'],['keys','03-api-keys.html','02'],['tasks','04-task-demo.html','03']].map(([key,target,num])=>'<a data-login-target="'+target+'" href="06-login.html?next='+target+'&lang='+language()+'"><small>'+num+'</small><div>'+slot(key,'h3')+slot(key+'Desc','p')+'</div><span aria-hidden="true">→</span></a>').join('')+'</div></section>';
+  const hero = () => '<section class="ps-intro-hero"><span class="ps-kicker">PATSIGHT × YOUR AGENT</span>'+slot('hero','h1')+slot('heroDesc','p')+'<div class="ps-hero-actions"><a class="ps-primary-action" data-login-target="02-agent-connect.html" href="06-login.html?next=02-agent-connect.html">'+slot('connectNow')+' →</a><button class="ps-secondary-action" id="ps-hero-watch" type="button">▷ '+slot('watchNow')+'</button></div>'+slot('setupHint','small')+'</section>';
+  const quick = () => '<section class="ps-quick" id="quick-actions">'+slot('quickTitle','h2')+slot('quickDesc','p')+'<div class="ps-quick-grid">'+[['setup','02-agent-connect.html','01'],['tasks','04-task-demo.html','02'],['keys','03-api-keys.html','03']].map(([key,target,num])=>'<a data-login-target="'+target+'" href="06-login.html?next='+target+'&lang='+language()+'"><small>'+num+'</small><div>'+slot(key,'h3')+slot(key+'Desc','p')+'</div><span aria-hidden="true">→</span></a>').join('')+'</div></section>';
   let mounted = false;
   const update = () => {
     document.querySelectorAll('[data-eval-label]').forEach(el=>{el.textContent=text(el.dataset.evalLabel)});
+    document.querySelectorAll('[data-series-label]').forEach(el=>el.setAttribute('aria-label',text(el.dataset.seriesLabel)+': '+el.dataset.score+'%'));
     document.querySelectorAll('.ps-chart-gain[title]').forEach(el=>{el.title=text('gainDesc')});
     document.querySelectorAll('[data-local-link]').forEach(el=>{const url=new URL(el.href);url.searchParams.set('lang',language());el.href=url.href});
-    document.querySelectorAll('[data-login-target]').forEach(el=>{el.href='06-login.html?next='+el.dataset.loginTarget+'&lang='+language()});
+    document.querySelectorAll('[data-login-target]').forEach(el=>{el.href='06-login.html?lang='+language()+(el.dataset.loginTarget==='04-task-demo.html'?'':'&next='+el.dataset.loginTarget)});
   };
   const mount = () => {
     if(mounted) return;
@@ -385,6 +393,7 @@ main > section:first-child > div:last-child > div > div + div{padding-top:28px;b
     cases.insertAdjacentHTML('afterend',quick());
     const copy=cases.querySelector('.ps-case-copy');
     if(copy) copy.insertAdjacentHTML('beforeend','<small class="ps-demo-module" data-eval-label="structuresModule">'+text('structuresModule')+'</small>');
+    document.getElementById('ps-hero-watch').onclick=()=>cases.querySelector('[data-ps-open]')?.click();
     update();
     if(location.hash)document.getElementById(location.hash.slice(1))?.scrollIntoView();
   };
@@ -415,6 +424,13 @@ main>section.ps-intro-hero{padding-bottom:30px}main>section.ps-intro-hero>div.ps
 .ps-eval-table thead th:nth-child(4) small{color:#6d86c2}
 .ps-eval-models{margin:14px 2px 0;font-size:11px;line-height:1.7;color:#8d9bb0}
 </style>
+<style id="patsight-conversion-review">
+.ps-hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin:25px 0 13px}.ps-primary-action,.ps-secondary-action{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 22px;border-radius:8px;font:600 14px/1.5 Inter,"Microsoft YaHei",sans-serif;text-decoration:none;cursor:pointer}.ps-primary-action{background:#1343d4;border:1px solid #1343d4;color:#fff}.ps-primary-action:hover{background:#103bbb;color:#fff}.ps-secondary-action{background:#fff;border:1px solid #d5dff0;color:#35507b}.ps-secondary-action:hover{background:#f5f8ff}.ps-primary-action:focus-visible,.ps-secondary-action:focus-visible{outline:3px solid #86a8ff;outline-offset:3px}.ps-intro-hero>small{display:block;font-size:12px;line-height:1.8;color:#617594}.ps-benefit-strip{margin-top:28px;padding:20px 24px;background:#f3f7ff;border:1px solid #e0e9fb;border-radius:10px}.ps-benefit-strip>strong{font-size:16px;line-height:1.6;color:#274569}.ps-benefit-strip>p{margin:6px 0 0;font-size:13px;line-height:1.8;color:#617594}.ps-sample-notice{display:flex;gap:12px;flex-wrap:wrap;padding:12px 16px;margin-bottom:18px;border:1px solid #eadfbd;border-radius:8px;background:#fffaf0;color:#796531;font-size:12px;line-height:1.7}.ps-sample-notice strong{font-weight:600}.ps-case-flow+[data-eval-label="resultNotice"]{font-size:12px;color:#71809a;line-height:1.8;margin:15px 0 0}.ps-quick-grid p{line-height:1.7}@media(max-width:760px){.ps-hero-actions{gap:10px}.ps-primary-action,.ps-secondary-action{flex:1;padding:12px 14px}.ps-benefit-strip{padding:17px 18px}.ps-sample-notice{gap:4px}}
+</style>
+<style id="patsight-shared-chart-legend">
+.ps-shared-legend{display:flex;align-items:center;flex-wrap:wrap;gap:24px;margin:0 0 20px;color:#617594;font-size:12px;line-height:1.6}.ps-shared-legend>span{display:inline-flex;align-items:center;gap:8px}.ps-legend-swatch{display:inline-block;width:14px;height:9px;border-radius:2px;background:#aebcd1}.ps-legend-1{background:#7694bf}.ps-legend-2{background:#1343d4}.ps-bar-row{grid-template-columns:minmax(0,1fr) 45px;gap:14px;margin:20px 0}.ps-chart-axis{margin-left:0;margin-right:59px}.ps-chart-head{margin-bottom:22px}.ps-eval-models{margin-top:18px;line-height:1.9}@media(max-width:760px){.ps-shared-legend{gap:12px 20px;font-size:11px}.ps-bar-row{grid-template-columns:minmax(0,1fr) 39px;gap:10px}.ps-chart-axis{margin-left:0;margin-right:49px}}
+</style>
+<style>.ps-poster-table>span{height:auto!important;min-height:20px;background:transparent!important;font-size:10px;line-height:1.6;color:#526c92;padding:3px 0;border-bottom:1px solid #edf1f7;border-radius:0!important}</style>
 </head>
   <body>
     <div id="app"></div>
